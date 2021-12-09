@@ -3,10 +3,11 @@ import { NavLink } from 'react-router-dom';
 import Styles from './Drawer.module.css';
 import Backdrop from '../../UI/Backdrop/Backdrop';
 const links = [
-  { to: '/', label: 'Список', exact: true },
-  { to: '/auth', label: 'Авторизация', exact: false },
-  { to: '/quiz-creator', label: 'Создать тест', exact: false },
+  { to: '/', label: 'Список', exact: 'true' },
+  { to: '/auth', label: 'Авторизация', exact: 'false' },
+  { to: '/quiz-creator', label: 'Создать тест', exact: 'false' },
 ];
+// Поменял в exact с true на 'true' ,  т.е. закинул в ковычки
 class Drawer extends Component {
   clickHandler = () => {
     this.props.onClose();
@@ -15,11 +16,7 @@ class Drawer extends Component {
     return links.map((link, index) => {
       return (
         <li key={index}>
-          <NavLink
-            to={link.to}
-            exact={link.exact}
-            activeClassName={Styles.active}
-            onClick={this.clickHandler}>
+          <NavLink to={link.to} exact={link.exact} onClick={this.clickHandler}>
             {link.label}{' '}
           </NavLink>
         </li>
