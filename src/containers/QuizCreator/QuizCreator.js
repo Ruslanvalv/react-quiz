@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from '../../axios/axios-quiz';
 import Styles from './QuizCreator.module.css';
 import Button from '../../components/UI/Button/Button';
 import { createControl, validate, validateForm } from '../../form/formFramework';
@@ -37,7 +38,7 @@ export default class QuizCreator extends Component {
     quiz: [],
     isFormValid: false,
     formControls: createFormControls(),
-    rightAnswerId: 1,
+    rightAnswer: 1,
   };
 
   submitHandler = (event) => {
@@ -51,7 +52,7 @@ export default class QuizCreator extends Component {
     const questionItem = {
       question: question.value,
       id: index,
-      rightAnswerId: this.state.rightAnswerId,
+      rightAnswer: this.state.rightAnswer,
       answers: [
         { text: option1.value, id: option1.id },
         { text: option2.value, id: option2.id },
@@ -64,12 +65,32 @@ export default class QuizCreator extends Component {
       quiz,
       isFormValid: false,
       formControls: createFormControls(),
-      rightAnswerId: 1,
+      rightAnswer: 1,
     });
   };
-  createQuestHandler = (event) => {
+  createQuestHandler = async (event) => {
     event.preventDefault();
-    console.log(this.state.quiz);
+
+    try {
+      await axios.post('/quizes.json', this.state.quiz);
+      this.setState({
+        quiz: [],
+        isFormValid: false,
+        formControls: createFormControls(),
+        rightAnswer: 1,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+    // axios
+    //   .post(
+    //     'https://react-quiz-8dba7-default-rtdb.europe-west1.firebasedatabase.app/quizes.json',
+    //     this.state.quiz,
+    //   )
+    //   .then((resp) => {
+    //     console.log(resp);
+    //   })
+    //   .catch((error) => console.log(error));
   };
   changeHandler = (value, controlName) => {
     const formControls = {
@@ -111,14 +132,14 @@ export default class QuizCreator extends Component {
   }
   selectChangeHandler = (event) => {
     this.setState({
-      rightAnswerId: +event.target.value,
+      rightAnswer: +event.target.value,
     });
   };
   render() {
     const select = (
       <Select
         label="Выберите правильный ответ"
-        value={this.state.rightAnswerId}
+        value={this.state.rightAnswer}
         onChange={this.selectChangeHandler}
         options={[
           { text: 1, value: 1 },
@@ -145,7 +166,7 @@ export default class QuizCreator extends Component {
             <Button
               type="success"
               onClick={this.createQuestHandler}
-              disabled={!this.state.quiz.length === 0}>
+              disabled={this.state.quiz.length === 0}>
               Создать тест
             </Button>
           </form>
